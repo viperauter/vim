@@ -5,13 +5,20 @@ command -v git >/dev/null 2>&1 || { echo "require git but it's not installed.  A
 command -v ctags >/dev/null 2>&1 || { echo "require ctags but it's not installed.  Aborting." >&2; exit 1; }
 #编译需要的vim源码git地址
 #git url(wget):https://github.com/vim/vim/archive/v7.4.144.tar.gz
-if [ ! -f v7.4.144.tar.gz ];then
-  echo "download the vim source"
-  wget https://github.com/vim/vim/archive/v7.4.144.tar.gz
-fi
-tar -xzvf v7.4.144.tar.gz
-mv vim-7.4.144 vim74
 
+#if [ ! -f v7.4.144.tar.gz ];then
+#  echo "download the vim source"
+#  wget https://github.com/vim/vim/archive/v7.4.144.tar.gz
+#fi
+#tar -xzvf v7.4.144.tar.gz
+#mv vim-7.4.144 vim74 7.4.144版本编译出来的没发使用
+
+#编译需要的vim源码git地址ftp://ftp.vim.org/pub/vim/unix/vim-7.4.tar.bz2
+if [ ! -f vim-7.4.tar.bz2 ];then
+  echo "download the vim source"
+  wget ftp://ftp.vim.org/pub/vim/unix/vim-7.4.tar.bz2
+fi
+tar -xjvf vim-7.4.tar.bz2
 #编译需要的vimgdb地址
 #git url(wget):https://codeload.github.com/larrupingpig/vimgdb-for-vim7.4/zip/master
 if [ ! -f vimgdb-for-vim7.4-master.zip ];then
@@ -46,6 +53,8 @@ fi
 make install
 cp -rf $cdir/vimgdb-for-vim7.4-master/vimgdb_runtime/ /usr/share/vim/vim/vim74/
 echo "vim compile success"
+cd /usr/share/vim/vim/vim74/doc/
+echo ":helptags ."|vim
 
 #安装bundle
 if [ ! -f ~/.vim/bundle/vundle/autoload/vundle.vim ];then
@@ -57,6 +66,10 @@ cd $cdir
 #生成vim默认配置加载文件.vimrc
 vimconfname=.vimrc
 vimloadbundle=.vimrc.bundles.local
+if [ -f $vimconfname ];then
+  rm -rf ./$vimconfname
+fi
+  
 touch $vimconfname
 echo -e "if &compatible" >> $vimconfname
 echo -e "  set nocompatible" >> $vimconfname
@@ -74,6 +87,12 @@ echo -e '  source ~/.vimrc.bundles.local' >> $vimconfname
 echo -e "endif" >> $vimconfname
 echo -e "\n" >> $vimconfname
 echo -e "filetype on" >> $vimconfname
+echo -e "set previewheight=10" >>$vimconfname
+echo -e "run macros/gdb_mappings.vim" >>$vimconfname
+echo -e "set asm=0" >>$vimconfname
+echo -e "set gdbprg=gdb" >>$vimconfname
+echo -e "set splitbelow" >>$vimconfname
+echo -e "set splitright" >>$vimconfname
 
 if [ -f ~/$vimconfname ];then
   mv ~/.vimrc ~/.vimrc.bak
