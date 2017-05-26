@@ -42,12 +42,7 @@ cd $cdir/vim74/src
 sed -i "s/BINDIR   = \/opt\/bin/BINDIR   = \/usr\/bin/" Makefile
 sed -i "s/MANDIR   = \/opt\/share\/man/MANDIR   = \/usr\/share\/man\/man1/" Makefile
 sed -i "s/DATADIR  = \/opt\/share/DATADIR  = \/usr\/share\/vim/" Makefile
-
-ldconfig -p|grep libncurses
-if [[ ! $? -eq 0 ]];then
-  echo "make vim source"
-  sudo apt-get install libncurses5-dev
-fi
+echo y|sudo apt-get install libncurses5-dev
 ./configure --enable-gdb --prefix=/usr/local/vim74 --enable-multibyte --enable-fontset --enable-xim --enable-gui=auto --enable-pythoninterp=yes --enable-rubyinterp=dynamic --enable-rubyinterp --enable-perlinterp --enable-cscope --enable-sniff --with-x --with-features=huge --enable-luainterp=dynami --with-python-config-dir=/usr/lib/python2.7/config --with-feature=big
 
 if [ $? -eq 0 ];then
@@ -81,10 +76,10 @@ echo  "if &compatible" >> $vimconfname
 echo  "  set nocompatible" >> $vimconfname
 echo  "end" >> $vimconfname
 echo  "filetype off" >> $vimconfname
-echo  "set rtp+=~/.vim/bundle/vundle/" >> $vimconfname
-echo  "call vundle#rc()" >> $vimconfname
-echo  "\" Let Vundle manage Vundle" >> $vimconfname
-echo  "Bundle 'gmarik/vundle'" >> $vimconfname
+"echo  "set rtp+=~/.vim/bundle/vundle/" >> $vimconfname
+"echo  "call vundle#rc()" >> $vimconfname
+"echo  "\" Let Vundle manage Vundle" >> $vimconfname
+"echo  "Bundle 'gmarik/vundle'" >> $vimconfname
 echo  "if filereadable(expand(\"~/.vimrc.bundles.local\"))" >> $vimconfname
 echo  '  source ~/.vimrc.bundles.local' >> $vimconfname
 echo  "endif" >> $vimconfname
@@ -109,7 +104,7 @@ if [ ! -f use_vim_as_ide-master.zip ];then
   wget https://codeload.github.com/yangyangwithgnu/use_vim_as_ide/zip/master -O use_vim_as_ide-master.zip
 fi
 unzip use_vim_as_ide-master.zip
-cd ./use_vim_as_ide-master/
+cd $cdir/use_vim_as_ide-master/
 sed -i "s/^colorscheme solarized/\"colorscheme solarized/" .vimrc 
 sed -i "s/set background=dark/set background=light/" .vimrc
 sed -i "s/^\"colorscheme phd/colorscheme phd/" .vimrc
@@ -122,6 +117,7 @@ vim +PluginInstall +qall
 rm -rf ~/.vim/bundle/YouCompleteMe
 cd ~/.vim/bundle/
 git clone https://git.oschina.net/viperauter/ubuntu-fix.git
+mv ubuntu-fix YouCompleteMe
 cd ~/.vim/bundle/YouCompleteMe/
 command -v cmake>/dev/null 2>&1 || { echo y|apt-get install cmake }
 git submodule update --init --recursive
